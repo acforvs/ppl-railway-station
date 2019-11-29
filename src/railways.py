@@ -1,5 +1,10 @@
 import logging
+from abc import ABC, abstractmethod
 from typing import Dict
+
+logging.basicConfig(format='%(levelname)s: %(asctime)s %(message)s', 
+                    level=logging.DEBUG,
+                    datefmt='%d/%m/%Y %H:%M:%S')
 
 TracksOccup = Dict[int, bool] 
 Track2Platfrom = Dict[int, int]
@@ -14,7 +19,14 @@ class Platforms():
         return F'''
         Platforms.
         There are {self.platforms_count} platforms at the station'''
+    
+    @abstractmethod
+    def set_platform(self, train_id, time, platform_num):
+        pass
 
+    @abstractmethod
+    def leave_platform(self, train_id, time, platform_num):
+        pass
 
 class RailTracks():
     '''Documentation goes here.
@@ -55,10 +67,6 @@ class RailTracks():
         return self.__tracks2platforms
     # Getters section end
 
-    def set_tracks_count(self, count):
-        logging.debug(F'set_tracks_count() called with the {count} argument')
-        self.__tracks_count = count
-
     def connect(self, track_num, platform_num):
         logging.debug(F'connect() called with the {track_num, platform_num} arguments')
         self.__tracks2platforms[track_num] = platform_num
@@ -67,8 +75,6 @@ class RailTracks():
         logging.debug(F'update_status() called with the {track_num} argument')
         self.__tracks_status[track_num] = not self.__tracks_status[track_num]
 
+    
 
-    
-    
-    
-    
+
