@@ -9,6 +9,8 @@ def create_dict(date):
     time_start = datetime.combine(date_input, time_input)
     for delta in range(-30, 1441):
         final = time_start + \
-            timedelta(days=0, hours=delta // 60, minutes=delta % 60)
+            timedelta(days=0, 
+                    hours=delta // 60, 
+                    minutes=delta % 60)
         availability[final] = {}
         schedule[final] = []
