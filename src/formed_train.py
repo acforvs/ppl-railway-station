@@ -2,9 +2,10 @@ from datetime import datetime, timedelta
 import logging
 from data import schedule, availability
 from train import AbstractTrain
-from strings import FORMED_DELAY_ARRIVAL, FORMED_DELAY_DEPARTURE, \
+from messages import FORMED_DELAY_ARRIVAL, FORMED_DELAY_DEPARTURE, \
     FORMED_WAY, FORMED_PLATFORM, \
     FORMED_ARRIVAL, FORMED_DEPARTURE
+from constants import MINUTES_DAY, MINUTES_HOUR
 
 class FormedTrain(AbstractTrain):
     '''
@@ -45,25 +46,24 @@ class FormedTrain(AbstractTrain):
     def delay_arrival(self, delay_time, changes_time):
         changes_time = datetime.strptime(changes_time, '%d/%m/%Y %H:%M').time()
         delta = timedelta(
-            days=delay_time // 1440,
+            days=delay_time // MINUTES_DAY,
             hours=(
                 delay_time -
-                delay_time % 1440) // 60,
-            minutes=delay_time % 60)
+                delay_time % MINUTES_DAY) // MINUTES_HOUR,
+            minutes=delay_time % MINUTES_HOUR)
         self.arrival = self.arrival + delta
         schedule[changes_time].append(FORMED_DELAY_ARRIVAL.format(self.id, delta))
 
     def delay_departure(self, delay_time, changes_time):
         changes_time = datetime.strptime(changes_time, '%d/%m/%Y %H:%M').time()
         delta = timedelta(
-            days=delay_time // 1440,
+            days=delay_time // MINUTES_DAY,
             hours=(
                 delay_time -
-                delay_time % 1440) // 60,
-            minutes=delay_time % 60)
+                delay_time % MINUTES_DAY) // MINUTES_HOUR,
+            minutes=delay_time % MINUTES_HOUR)
         self.departure = self.departure + delta
         schedule[changes_time].append(FORMED_DELAY_DEPARTURE.format(self.id, delta))
 
     def depart(self):
         schedule[self.departure].append(FORMED_DEPARTURE.format(self.id))
-        

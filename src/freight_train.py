@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import logging
 from data import schedule, availability
 from train import AbstractTrain
-from strings import FREIGHT_ARRIVAL, FREIGHT_DELAY_ARRIVAL, \
+from messages import FREIGHT_ARRIVAL, FREIGHT_DELAY_ARRIVAL, \
     FREIGHT_PLATFORM, FREIGHT_WAY
 
 class FreightTrain(AbstractTrain):
@@ -45,4 +45,4 @@ class FreightTrain(AbstractTrain):
     def depart(self):
         raise ValueError('''The freight train should stay here a little longer.
                             There is no depart() func for this train''')
-                            
+

@@ -1,7 +1,11 @@
 from datetime import datetime, timedelta
+from collections import namedtuple
 
+ways2platforms = {}
 schedule = {}
 availability = {}
+trains = {}
+train = namedtuple('train', ['carriages', 'route', 'train_type'])
 
 def create_dict(date):
     date_input = datetime.strptime(date, '%d/%m/%Y').date()
