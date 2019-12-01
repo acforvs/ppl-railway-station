@@ -31,14 +31,11 @@ class Parser:
         Processing the arguments from the command line
         '''
         arguments = self.parse()
-        if arguments['usage']:
+        if arguments.usage:
             print(USAGE)
-            return
-        if arguments['file']:
+            return None
+        if arguments.file:
             return arguments.file[0]
 
         print(ARGUMENTS)
-        return
-            
-
-
+        return None

@@ -5,16 +5,18 @@ ways2platforms = {}
 schedule = {}
 availability = {}
 trains = {}
-train = namedtuple('train', ['carriages', 'route', 'train_type'])
+events = []
+
+sign = lambda a: (a>0) - (a<0)
 
 def create_dict(date):
-    date_input = datetime.strptime(date, '%d/%m/%Y').date()
-    time_input = datetime.strptime('00:00', '%H:%M').time()
+    date_input = datetime.strptime(date, '%d/%m/%Y').date() - timedelta(days=1)
+    time_input = datetime.strptime('23:30', '%H:%M').time()
     time_start = datetime.combine(date_input, time_input)
-    for delta in range(-30, 1441):
+    for delta in range(0, 1471):
         final = time_start + \
-            timedelta(days=0, 
+            timedelta(days=delta // 1440, 
                     hours=delta // 60, 
                     minutes=delta % 60)
-        availability[final] = {}
+        availability[final] = set()
         schedule[final] = []

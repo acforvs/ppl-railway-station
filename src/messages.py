@@ -33,3 +33,8 @@ FORMED_DELAY_ARRIVAL = "The train №{} is not ready yet, readiness is delayed f
 FORMED_DELAY_DEPARTURE = "The train's №{} departure is delayed for {} minutes"
 
 FORMED_DEPARTURE = "The train №{} is currently departuring"
+
+
+NEW_CARR = "{} carriages were added to the train №{} at {}"
+
+LESS_CARR = "{} carriages were removed from the train №{} at {}"

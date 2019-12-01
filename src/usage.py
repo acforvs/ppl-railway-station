@@ -11,7 +11,7 @@ FORMAT:
 2nd line: [N] [M] [K] —— amount of trains, events and connections
 3rd line: [amount of platforms] [amount of ways]
 K lines: [connection]
-N lines: [train number] [amount of carriages] [route] [train type]
+N lines: [train number] [amount of carriages] [train type]
 M lines: [train number] [event]
 
 CONNECTION DESCRIPTION (if platform and way are connected):
@@ -23,13 +23,12 @@ F    :     freight
 E    :     the train that destination / origin is the platfrom
 
 POSSIBLE EVENTS:
-1. add [amount]    :    add [amount] of carriages
-2. remove [amount]    :    remove [amount] of carriages 
+1. add [amount] [time]    :    add [amount] of carriages in [time]
+2. remove [amount] [time]    :    remove [amount] of carriages in [time]
 3. schedule [arrival] [departure]    :    set the arrival & departure time 
 format    :    day/month/year hours:minutes
-4. delay arrival [minutes]    :    delay the arrival for [minutes] minutes
-5. delay departure [minutes]    :    delay the departure for [minutes] minutes
-6. renumerate    :    renumerate the carriages
+4. delay arrival [minutes] [time]    :    delay the arrival for [minutes] minutes in [time]
+5. delay departure [minutes] [time]    :    delay the departure for [minutes] minutes in [time]
 '''
 
 ARGUMENTS = '''
