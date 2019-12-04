@@ -1,10 +1,8 @@
 from datetime import datetime, timedelta
-import logging
 import random
-from data import schedule, availability, ways2platforms
 from train import AbstractTrain
-from messages import FREIGHT_ARRIVAL, FREIGHT_DELAY_ARRIVAL, \
-    FREIGHT_PLATFORM, FREIGHT_WAY
+from data import schedule, availability, ways2platforms
+from messages import FREIGHT_ARRIVAL, FREIGHT_PLATFORM, FREIGHT_WAY
 
 class FreightTrain(AbstractTrain):
     '''
@@ -26,7 +24,7 @@ class FreightTrain(AbstractTrain):
                          departure,
                          from_head)
 
-    def L_arrivée_d_un_train(self):
+    def arrive(self):
         schedule[self.arrival].append(FREIGHT_ARRIVAL.format(self.train_id))
 
     def set_platform(self):
@@ -36,26 +34,10 @@ class FreightTrain(AbstractTrain):
         schedule[setting_time].append(FREIGHT_PLATFORM.format(self.train_id, 
                                                         self.platform, 
                                                         self.arrival))
-
-    def delay_arrival(self, delay_time, changes_time):
-        pass
-
-    def delay_departure(self, delay_time, changes_time):
-        pass
-
     def set_way(self):
         delta = timedelta(minutes=10)
         setting_time = self.arrival - delta
-        self.way = random.choice(list(availability[setting_time]))
-        for delta in range(0, (self.departure - self.arrival).seconds // 60):
-            final = setting_time + \
-                timedelta(days=0, 
-                        hours=delta // 60, 
-                        minutes=delta % 60)
-            try:
-                availability[final].remove(self.way)
-            except:
-                pass
+        super().set_way(setting_time.strftime('%d/%m/%Y %H:%M'))
         schedule[setting_time].append(FREIGHT_WAY.format(self.train_id, self.way))
 
     def depart(self):
@@ -63,8 +45,7 @@ class FreightTrain(AbstractTrain):
                             There is no depart() func for this train''')
 
     def process_train(self):
-        self.L_arrivée_d_un_train()
+        self.arrive()
         self.set_way()
         self.set_platform()
-        self.depart()
         

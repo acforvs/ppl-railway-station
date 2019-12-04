@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta
-import logging
 import random
-from data import schedule, availability, ways2platforms
 from train import AbstractTrain
-from messages import PASSENGER_DELAY_ARRIVAL, PASSENGER_DELAY_DEPARTURE, \
-    PASSENGER_WAY, PASSENGER_PLATFORM, \
-    PASSENGER_ARRIVAL, PASSENGER_DEPARTURE
+from data import schedule, availability, ways2platforms, initialize
+from messages import PASSENGER_WAY, PASSENGER_PLATFORM, \
+    PASSENGER_ARRIVAL, PASSENGER_DEPARTURE, \
+        PASSENGER_DELAY_ARRIVAL, PASSENGER_DELAY_DEPARTURE
 from constants import MINUTES_DAY, MINUTES_HOUR
 
 class PassengerTrain(AbstractTrain):
@@ -28,7 +27,7 @@ class PassengerTrain(AbstractTrain):
                          departure,
                          from_head)
 
-    def L_arrivée_d_un_train(self):
+    def arrive(self):
         schedule[self.arrival].append(PASSENGER_ARRIVAL.format(self.train_id))
 
     def set_platform(self):
@@ -38,58 +37,23 @@ class PassengerTrain(AbstractTrain):
         schedule[setting_time].append(PASSENGER_PLATFORM.format(self.train_id, 
                                                             self.platform, 
                                                             self.arrival))
-
     def set_way(self):
         delta = timedelta(minutes=10)
         setting_time = self.arrival - delta
-        self.way = random.choice(list(availability[setting_time]))
-        for delta in range(0, (self.departure - self.arrival).seconds // 60):
-            final = setting_time + \
-                timedelta(days=0, 
-                        hours=delta // 60, 
-                        minutes=delta % 60)
-            try:
-                availability[final].remove(self.way)
-            except:
-                pass
+        super().set_way(setting_time.strftime('%d/%m/%Y %H:%M'))
         schedule[setting_time].append(PASSENGER_WAY.format(self.train_id, self.way))
 
     def delay_arrival(self, delay_time, changes_time):
-        changes_time = datetime.strptime(changes_time, '%d/%m/%Y %H:%M')
-        delta = timedelta(
-            days=delay_time // MINUTES_DAY,
-            hours=(
-                delay_time -
-                delay_time % MINUTES_DAY) // MINUTES_HOUR,
-            minutes=delay_time % MINUTES_HOUR)
-        self.arrival = self.arrival + delta
-        schedule[changes_time].append(PASSENGER_DELAY_ARRIVAL.format(self.train_id, delta))
+        super().delay_arrival(delay_time, changes_time, PASSENGER_DELAY_ARRIVAL)
 
     def delay_departure(self, delay_time, changes_time):
-        changes_time = datetime.strptime(changes_time, '%d/%m/%Y %H:%M')
-        delta = timedelta(
-            days=delay_time // MINUTES_DAY,
-            hours=(
-                delay_time -
-                delay_time % MINUTES_DAY) // MINUTES_HOUR,
-            minutes=delay_time % MINUTES_HOUR)
-        for delta in range(0, delay_time):
-            final = self.departure + \
-                timedelta(days=0, 
-                        hours=delta // 60, 
-                        minutes=delta % 60)
-            try:
-                availability[final].remove(self.way)
-            except:
-                pass
-        self.departure = self.departure + delta
-        schedule[changes_time].append(PASSENGER_DELAY_DEPARTURE.format(self.train_id, delta))
+        super().delay_departure(delay_time, changes_time, PASSENGER_DELAY_DEPARTURE)
 
     def depart(self):
         schedule[self.departure].append(PASSENGER_DEPARTURE.format(self.train_id))
 
     def process_train(self):
-        self.L_arrivée_d_un_train()
+        self.arrive()
         self.set_way()
         self.set_platform()
         self.depart()

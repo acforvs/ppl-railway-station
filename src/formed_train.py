@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta
-import logging
 import random
-from data import schedule, availability, ways2platforms
 from train import AbstractTrain
-from messages import FORMED_DELAY_ARRIVAL, FORMED_DELAY_DEPARTURE, \
-    FORMED_WAY, FORMED_PLATFORM, \
-    FORMED_ARRIVAL, FORMED_DEPARTURE
+from data import schedule, availability, ways2platforms
+from messages import FORMED_WAY, FORMED_PLATFORM, \
+    FORMED_ARRIVAL, FORMED_DEPARTURE, \
+        FORMED_DELAY_ARRIVAL, FORMED_DELAY_DEPARTURE
 from constants import MINUTES_DAY, MINUTES_HOUR
 
 class FormedTrain(AbstractTrain):
@@ -20,16 +19,22 @@ class FormedTrain(AbstractTrain):
                  departure: str = None,
                  from_head: bool = None):
 
-        arrival = departure - timedelta(minutes=20)
         super().__init__(train_id,
                          carriage_num,
                          platform,
                          way,
-                         arrival,
-                         departure,
-                         from_head)
+                         arrival=None,
+                         departure=departure,
+                         from_head=from_head)
 
-    def L_arrivée_d_un_train(self):
+
+    def set_departure(self, departure_time):
+        super().set_departure(departure_time)
+        arrival_time = self.departure - timedelta(minutes=20)
+        arrival_time = arrival_time.strftime('%d/%m/%Y %H:%M')
+        super().set_arrival(arrival_time)
+
+    def arrive(self):
         schedule[self.departure].append(FORMED_ARRIVAL.format(self.train_id))
 
     def set_platform(self):
@@ -41,54 +46,20 @@ class FormedTrain(AbstractTrain):
     def set_way(self):
         delta = timedelta(minutes=30)
         setting_time = self.arrival - delta
-        self.way = random.choice(list(availability[setting_time]))
-        for delta in range(0, (self.departure - self.arrival).seconds // 60):
-            final = setting_time + \
-                timedelta(days=0, 
-                        hours=delta // 60, 
-                        minutes=delta % 60)
-            try:
-                availability[final].remove(self.way)
-            except:
-                pass
+        super().set_way(setting_time.strftime('%d/%m/%Y %H:%M'))
         schedule[setting_time].append(FORMED_WAY.format(self.train_id, self.way))
 
     def delay_arrival(self, delay_time, changes_time):
-        changes_time = datetime.strptime(changes_time, '%d/%m/%Y %H:%M')
-        delta = timedelta(
-            days=delay_time // MINUTES_DAY,
-            hours=(
-                delay_time -
-                delay_time % MINUTES_DAY) // MINUTES_HOUR,
-            minutes=delay_time % MINUTES_HOUR)
-        self.arrival = self.arrival + delta
-        schedule[changes_time].append(FORMED_DELAY_ARRIVAL.format(self.train_id, delta))
+        super().delay_arrival(delay_time, changes_time, FORMED_DELAY_ARRIVAL)
 
     def delay_departure(self, delay_time, changes_time):
-        changes_time = datetime.strptime(changes_time, '%d/%m/%Y %H:%M')
-        delta = timedelta(
-            days=delay_time // MINUTES_DAY,
-            hours=(
-                delay_time -
-                delay_time % MINUTES_DAY) // MINUTES_HOUR,
-            minutes=delay_time % MINUTES_HOUR)
-        for delta in range(0, delay_time):
-            final = self.departure + \
-                timedelta(days=0, 
-                        hours=delta // 60, 
-                        minutes=delta % 60)
-            try:
-                availability[final].remove(self.way)
-            except:
-                pass
-        self.departure = self.departure + delta
-        schedule[changes_time].append(FORMED_DELAY_DEPARTURE.format(self.train_id, delta))
+        super().delay_departure(delay_time, changes_time, FORMED_DELAY_DEPARTURE)
 
     def depart(self):
         schedule[self.departure].append(FORMED_DEPARTURE.format(self.train_id))
 
     def process_train(self):
-        self.L_arrivée_d_un_train()
+        self.arrive()
         self.set_way()
         self.set_platform()
         self.depart()

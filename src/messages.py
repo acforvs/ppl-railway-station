@@ -6,7 +6,7 @@ PASSENGER_WAY = "For the passenger train №{} the track №{} was chosen"
 
 PASSENGER_DELAY_ARRIVAL = "Arrival of the passenger train №{} is delayed for {} minutes"
 
-PASSENGER_DELAY_DEPARTURE = "Departure of the passenger train #{} is delayed for {} minutes"
+PASSENGER_DELAY_DEPARTURE = "Departure of the passenger train №{} is delayed for {} minutes"
 
 PASSENGER_DEPARTURE = "The passenger train №{} is currently departuring"
 
@@ -38,3 +38,6 @@ FORMED_DEPARTURE = "The train №{} is currently departuring"
 NEW_CARR = "{} carriages were added to the train №{} at {}"
 
 LESS_CARR = "{} carriages were removed from the train №{} at {}"
+
+
+SEPARATOR = "########################################"
