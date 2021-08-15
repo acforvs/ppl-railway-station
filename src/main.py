@@ -26,7 +26,7 @@ def main():
             if (event.description[1] == 'departure'):
                 trains[event.id].delay_departure(minutes, changes_time)
 
-    with open('/Users/vladislavsavinov/Projects/ppl-railway-station-acforvs/src/out.txt', 'w') as out:  
+    with open('./src/out.txt', 'w') as out:  
         for key in schedule.items():
             date = key[0]
             messages_list = key[1]
